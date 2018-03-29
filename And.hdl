@@ -17,7 +17,7 @@ CHIP And {
 
     PARTS:
     // Put your code here:
-	// Completed: 2018-03-26
-	Nand(a=a, b=b, out=outTemp);
-	Not(in=outTemp, out=out);
+    // Completed: 2018-03-26
+    Nand(a=a, b=b, out=outTemp);
+    Not(in=outTemp, out=out);
 }
