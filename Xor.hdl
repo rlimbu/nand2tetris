@@ -14,9 +14,9 @@ CHIP Xor {
 
     PARTS:
     // Put your code here:
-	// Completed: 2018-03-31
-	Nand(a=a, b=b, out=outNand1);
-	Nand(a=a, b=outNand1, out=outNand2);
-	Nand(a=b, b=outNand1, out=outNand3);
-	Nand(a=outNand2, b=outNand3, out=out);
+    // Completed: 2018-03-31
+    Nand(a=a, b=b, out=outNand1);
+    Nand(a=a, b=outNand1, out=outNand2);
+    Nand(a=b, b=outNand1, out=outNand3);
+    Nand(a=outNand2, b=outNand3, out=out);
 }
