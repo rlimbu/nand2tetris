@@ -1,1 +1,1 @@
-This folder contains hdl implementations of chips to perform boolean arithmetic using parts created in project 01.
+This folder contains hdl implementations of chips to perform boolean arithmetic using parts created in project 01. It concludes with the creation of an airthmetic logic unit (ALU) using chips created in this and the previous project.
