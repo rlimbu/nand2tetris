@@ -18,7 +18,7 @@ CHIP RAM8 {
     // Put your code here:
     // Completed: 2018-04-06
 	
-	// select the register to load if the load bit is set
+    // select the register to load if the load bit is set
     DMux8Way(in=load, sel=address, a=loadreg0, b=loadreg1, c=loadreg2, d=loadreg3, e=loadreg4, f=loadreg5, g=loadreg6, h=loadreg7);
 		
     Register(in=in, load=loadreg0, out=outreg0);
@@ -30,6 +30,6 @@ CHIP RAM8 {
     Register(in=in, load=loadreg6, out=outreg6);
     Register(in=in, load=loadreg7, out=outreg7);
 	
-    // output the content of the register at address
+    // output the content of the register at "address"
     Mux8Way16(a=outreg0, b=outreg1, c=outreg2, d=outreg3, e=outreg4, f=outreg5, g=outreg6, h=outreg7, sel=address, out=out);
 }
