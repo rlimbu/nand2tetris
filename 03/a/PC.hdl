@@ -25,7 +25,7 @@ CHIP PC {
     // select output based on control bits 
     Mux8Way16(a=outpc, b=false, c=in, d=false, e=outinc, f=false, g=in, h=false, sel[0]=reset, sel[1]=load, sel[2]=inc, out=outmux8way);
 	
-	// populate PC output pin via a register so that feedback loop works 
-	Register(in=outmux8way, load=true, out=out, out=outpc);	
+    // populate PC output pin via a register so that feedback loop works 
+    Register(in=outmux8way, load=true, out=out, out=outpc);	
 	
 }
