@@ -1,0 +1,98 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/CPU.hdl
+
+/**
+ * The Hack CPU (Central Processing unit), consisting of an ALU,
+ * two registers named A and D, and a program counter named PC.
+ * The CPU is designed to fetch and execute instructions written in 
+ * the Hack machine language. In particular, functions as follows:
+ * Executes the inputted instruction according to the Hack machine 
+ * language specification. The D and A in the language specification
+ * refer to CPU-resident registers, while M refers to the external
+ * memory location addressed by A, i.e. to Memory[A]. The inM input 
+ * holds the value of this location. If the current instruction needs 
+ * to write a value to M, the value is placed in outM, the address 
+ * of the target location is placed in the addressM output, and the 
+ * writeM control bit is asserted. (When writeM==0, any value may 
+ * appear in outM). The outM and writeM outputs are combinational: 
+ * they are affected instantaneously by the execution of the current 
+ * instruction. The addressM and pc outputs are clocked: although they 
+ * are affected by the execution of the current instruction, they commit 
+ * to their new values only in the next time step. If reset==1 then the 
+ * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather 
+ * than to the address resulting from executing the current instruction. 
+ */
+
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    // Put your code here:
+    // Completed: 2018-04-13
+	
+    // get instruction type bit
+    Or(a=false, b=instruction[15], out=outinstype);
+	
+    // create bit to load register A. Load register A when there is A-instruction, or A destination bit is set in a C-instruction
+    Not(in=outinstype, out=outinsttypeA);	
+    Or(a=outinsttypeA, b=instruction[5], out=loadA);
+	
+    // select instruction rather than ALU output when the instruction is of type A
+    Mux16(a=instruction, b=outalu, sel=outinstype, out=intoA);
+		
+    ARegister(in=intoA, load=loadA, out=outA, out[0..14]=addressM);
+	
+    //load A/M pin of ALU with either register A or inM. Load A if 12th instruction bit is 0
+    Mux16(a=outA, b=inM, sel=instruction[12], out=intoALU);	
+	
+    // create bit to load register D. Load register D when there is C-instruction type and C destination bit is set
+    And(a=instruction[4], b=outinstype, out=loadD);
+    DRegister(in=outalu, load=loadD, out=outD);
+		
+    //load ALU. Note that output of register D goes into x and that of A/inM into y ALU pins
+    ALU(x=outD, y=intoALU, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outalu, out=outM, zr=outaluzr, ng=outalung);
+	
+    // set writeM bit
+    And(a=instruction[3], b=outinstype, out=writeM);
+	
+    // set load bit for PC. PC is loaded when one of the jump conditions is fulfilled
+    // first, set bit to detect the condition ALU ouptput > 0
+    Or(a=outaluzr, b=outalung, out=outpos0);
+    Not(in=outpos0, out=outpos1);
+	
+    // next, set bit for unconditional jump
+    And(a=instruction[0], b=instruction[1], out=ucontdjump0);
+    And(a=instruction[2], b=ucontdjump0, out=ucontdjump1);
+	
+    // set jump bit when output is greater than 0
+    And(a=instruction[0], b=outpos1, out=outjmpgt);
+	
+    // set jump bit when output is equal to 0
+    And(a=instruction[1], b=outaluzr, out=outjmpeq);
+	
+    // set jump bit when output is less than 0
+    And(a=instruction[2], b=outalung, out=outjmplt);
+			
+    // set load bit when one of the jump bits is set
+    Or(a=ucontdjump1, b=outjmpgt, out=outloadpc0);
+    Or(a=outloadpc0, b=outjmpeq, out=outloadpc1);
+    Or(a=outloadpc1, b=outjmplt, out=outloadpc2);
+	
+    // jump bits only make sense in the context of C-instruction
+    And(a=outinstype, b=outloadpc2, out=outloadpc3);
+	
+    // set inc to "true"
+    PC(in=outA, load=outloadpc3, inc=true, reset=reset, out[0..14]=pc);
+}
