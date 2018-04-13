@@ -24,6 +24,6 @@ CHIP Computer {
 	
     ROM32K(address=outalupc, out=outROM);
 	CPU(inM=outmemory, instruction=outROM, reset=reset, outM=outaluM, writeM=outaluwriteM, addressM=outaluaddressM, pc=outalupc); 
-	Memory(in=outaluM,load=outaluwriteM,address=outaluaddressM,out=outmemory);
+	Memory(in=outaluM, load=outaluwriteM, address=outaluaddressM, out=outmemory);
 	
 }
