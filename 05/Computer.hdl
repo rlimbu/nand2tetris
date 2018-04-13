@@ -23,7 +23,6 @@ CHIP Computer {
     // Completed: 2018-04-13
 	
     ROM32K(address=outalupc, out=outROM);
-	CPU(inM=outmemory, instruction=outROM, reset=reset, outM=outaluM, writeM=outaluwriteM, addressM=outaluaddressM, pc=outalupc); 
-	Memory(in=outaluM, load=outaluwriteM, address=outaluaddressM, out=outmemory);
-	
+    CPU(inM=outmemory, instruction=outROM, reset=reset, outM=outaluM, writeM=outaluwriteM, addressM=outaluaddressM, pc=outalupc); 
+    Memory(in=outaluM, load=outaluwriteM, address=outaluaddressM, out=outmemory);	
 }
